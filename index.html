@@ -24,24 +24,9 @@
   animation: fadeIn 1.5s ease;
 }
 
-h1 {
-  font-size: 2.2rem;
-  margin-bottom: 10px;
-}
-
-p {
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-  line-height: 1.6;
-}
 h1 { font-size: 2.2rem; margin-bottom: 10px; }
 p { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.6; }
 
-.heart {
-  font-size: 3rem;
-  animation: beat 1s infinite;
-  margin-bottom: 15px;
-}
 .heart { font-size: 3rem; animation: beat 1s infinite; margin-bottom: 15px; }
 
 .photos {
@@ -61,7 +46,6 @@ p { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.6; }
 
 .buttons {
   position: relative;
-  height: 60px;
   height: 80px;
   margin-top: 25px;
 }
@@ -73,26 +57,18 @@ button {
   border-radius: 30px;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
   position: absolute;
 }
 
 #yesBtn {
   background: #ff4b5c;
   left: 50%;
-  transform: translateX(-110%);
-}
-
-#yesBtn:hover {
-  background: #ff2f44;
-  transform: translateX(-110%) scale(1.05);
   transform: translateX(-120%);
 }
 
 #noBtn {
   background: #555;
   left: 50%;
-  transform: translateX(10%);
   transform: translateX(20%);
 }
 
@@ -144,12 +120,12 @@ button {
 </div>
 
   </div>  <script>
-    // Ultra-reliable No-button logic (Chrome-safe)
+    // FINAL, SIMPLE, UNBREAKABLE VERSION
     const noBtn = document.getElementById('noBtn');
     const yesBtn = document.getElementById('yesBtn');
 
-    const MIN_RUNS = 5;
     let runs = 0;
+    const MIN_RUNS = 5;
 
     const messages = [
       "Wait… are you sure? 🥺",
@@ -158,49 +134,18 @@ button {
       "Okay okay… I’m nervous 😰",
       "I can’t keep running 😵"
     ];
-    const MIN_RUNS = 5; // minimum times the No button must run
-    let tries = 0; // counts how many times it has escaped
 
-    // Make movement independent of layout quirks
-    noBtn.style.position = 'fixed';
-
-    function flee() {
-      // Surrender after enough attempts
-      if (tries >= Math.max(messages.length, MIN_RUNS)) {
-        noBtn.textContent = surrenderText;
-        noBtn.style.left = '50%';
-        noBtn.style.top = '70%';
-        noBtn.style.transform = 'translate(-50%, -50%) scale(1.05)';
-        noBtn.onclick = () => yesBtn.click();
-        return;
-      }
-
-      const pad = 16;
-      const maxX = window.innerWidth - noBtn.offsetWidth - pad;
-      const maxY = window.innerHeight - noBtn.offsetHeight - pad;
-    noBtn.addEventListener('pointerdown', () => {
+    function runAway() {
       if (runs >= MIN_RUNS) return;
 
-      const x = Math.max(pad, Math.random() * maxX);
-      const y = Math.max(pad, Math.random() * maxY);
-      noBtn.classList.remove('running'); // reset animation
-      void noBtn.offsetWidth; // force reflow
+      // restart CSS animation every time
+      noBtn.classList.remove('running');
+      void noBtn.offsetHeight; // force reflow (reliable)
       noBtn.classList.add('running');
 
-      noBtn.style.left = x + 'px';
-      noBtn.style.top = y + 'px';
-      noBtn.textContent = messages[tries] || messages[messages.length - 1];
-      tries++;
-    }
       noBtn.textContent = messages[runs] || messages[messages.length - 1];
       runs++;
 
-    // Pointer events are the most reliable across Chrome + mobile
-    ['pointerenter', 'pointerdown', 'mouseenter', 'touchstart'].forEach(evt => {
-      noBtn.addEventListener(evt, (e) => {
-        e.preventDefault();
-        flee();
-      }, { passive: false });
       if (runs === MIN_RUNS) {
         setTimeout(() => {
           noBtn.classList.remove('running');
@@ -209,12 +154,38 @@ button {
           noBtn.onclick = () => yesBtn.click();
         }, 450);
       }
-    });
+    }
+
+    // Use ONLY hover / touch — no pointer chaos
+    noBtn.addEventListener('mouseenter', runAway);
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      runAway();
+    }, { passive: false });
 
     yesBtn.addEventListener('click', () => {
       launchConfetti();
-      setTimeout(() => alert('YAY!!! ❤️💖 You just made me the happiest person ever!'), 200);
+      setTimeout(showFinalScreen, 600);
     });
+
+    function showFinalScreen() {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.background = 'linear-gradient(135deg, #ff758c, #ff7eb3)';
+      overlay.style.display = 'flex';
+      overlay.style.flexDirection = 'column';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.color = '#fff';
+      overlay.style.textAlign = 'center';
+      overlay.style.zIndex = 10000;
+      overlay.innerHTML = `
+        <h1 style="font-size:2.8rem;margin-bottom:10px">Happy Valentine’s</h1>
+        <h2 style="font-size:2.2rem">My Love ♥️</h2>
+      `;
+      document.body.appendChild(overlay);
+    }
 
     function launchConfetti() {
       for (let i = 0; i < 120; i++) {
