@@ -24,22 +24,10 @@
   animation: fadeIn 1.5s ease;
 }
 
-h1 {
-  font-size: 2.2rem;
-  margin-bottom: 10px;
-}
+h1 { font-size: 2.2rem; margin-bottom: 10px; }
+p { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.6; }
 
-p {
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-  line-height: 1.6;
-}
-
-.heart {
-  font-size: 3rem;
-  animation: beat 1s infinite;
-  margin-bottom: 15px;
-}
+.heart { font-size: 3rem; animation: beat 1s infinite; margin-bottom: 15px; }
 
 .photos {
   display: grid;
@@ -58,7 +46,7 @@ p {
 
 .buttons {
   position: relative;
-  height: 60px;
+  height: 80px;
   margin-top: 25px;
 }
 
@@ -69,25 +57,32 @@ button {
   border-radius: 30px;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
   position: absolute;
 }
 
 #yesBtn {
   background: #ff4b5c;
   left: 50%;
-  transform: translateX(-110%);
-}
-
-#yesBtn:hover {
-  background: #ff2f44;
-  transform: translateX(-110%) scale(1.05);
+  transform: translateX(-120%);
 }
 
 #noBtn {
   background: #555;
   left: 50%;
-  transform: translateX(10%);
+  transform: translateX(20%);
+}
+
+/* NEW: reliable run animation */
+@keyframes runAway {
+  0%   { transform: translate(20%, 0); }
+  25%  { transform: translate(-120%, -10px); }
+  50%  { transform: translate(80%, 10px); }
+  75%  { transform: translate(-60%, -15px); }
+  100% { transform: translate(20%, 0); }
+}
+
+.running {
+  animation: runAway 0.4s linear;
 }
 
 @keyframes beat {
@@ -125,9 +120,11 @@ button {
 </div>
 
   </div>  <script>
-    // Ultra-reliable No-button logic (Chrome-safe)
     const noBtn = document.getElementById('noBtn');
     const yesBtn = document.getElementById('yesBtn');
+
+    const MIN_RUNS = 5;
+    let runs = 0;
 
     const messages = [
       "Wait… are you sure? 🥺",
@@ -136,42 +133,25 @@ button {
       "Okay okay… I’m nervous 😰",
       "I can’t keep running 😵"
     ];
-    const MIN_RUNS = 5; // minimum times the No button must run
-    let tries = 0; // counts how many times it has escaped
 
-    // Make movement independent of layout quirks
-    noBtn.style.position = 'fixed';
+    noBtn.addEventListener('pointerdown', () => {
+      if (runs >= MIN_RUNS) return;
 
-    function flee() {
-      // Surrender after enough attempts
-      if (tries >= Math.max(messages.length, MIN_RUNS)) {
-        noBtn.textContent = surrenderText;
-        noBtn.style.left = '50%';
-        noBtn.style.top = '70%';
-        noBtn.style.transform = 'translate(-50%, -50%) scale(1.05)';
-        noBtn.onclick = () => yesBtn.click();
-        return;
+      noBtn.classList.remove('running'); // reset animation
+      void noBtn.offsetWidth; // force reflow
+      noBtn.classList.add('running');
+
+      noBtn.textContent = messages[runs] || messages[messages.length - 1];
+      runs++;
+
+      if (runs === MIN_RUNS) {
+        setTimeout(() => {
+          noBtn.classList.remove('running');
+          noBtn.textContent = 'okay fine... yes 😭';
+          noBtn.style.background = '#ff4b5c';
+          noBtn.onclick = () => yesBtn.click();
+        }, 450);
       }
-
-      const pad = 16;
-      const maxX = window.innerWidth - noBtn.offsetWidth - pad;
-      const maxY = window.innerHeight - noBtn.offsetHeight - pad;
-
-      const x = Math.max(pad, Math.random() * maxX);
-      const y = Math.max(pad, Math.random() * maxY);
-
-      noBtn.style.left = x + 'px';
-      noBtn.style.top = y + 'px';
-      noBtn.textContent = messages[tries] || messages[messages.length - 1];
-      tries++;
-    }
-
-    // Pointer events are the most reliable across Chrome + mobile
-    ['pointerenter', 'pointerdown', 'mouseenter', 'touchstart'].forEach(evt => {
-      noBtn.addEventListener(evt, (e) => {
-        e.preventDefault();
-        flee();
-      }, { passive: false });
     });
 
     yesBtn.addEventListener('click', () => {
