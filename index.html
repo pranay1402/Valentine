@@ -151,7 +151,11 @@ button {
           noBtn.classList.remove('running');
           noBtn.textContent = 'okay fine... yes 😭';
           noBtn.style.background = '#ff4b5c';
-          noBtn.onclick = () => yesBtn.click();
+          noBtn.onclick = () => {
+          // trigger same flow as YES
+          launchConfetti();
+          
+        };
         }, 450);
       }
     }
@@ -165,27 +169,10 @@ button {
 
     yesBtn.addEventListener('click', () => {
       launchConfetti();
-      setTimeout(showFinalScreen, 600);
+      
     });
 
-    function showFinalScreen() {
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.inset = '0';
-      overlay.style.background = 'linear-gradient(135deg, #ff758c, #ff7eb3)';
-      overlay.style.display = 'flex';
-      overlay.style.flexDirection = 'column';
-      overlay.style.alignItems = 'center';
-      overlay.style.justifyContent = 'center';
-      overlay.style.color = '#fff';
-      overlay.style.textAlign = 'center';
-      overlay.style.zIndex = 10000;
-      overlay.innerHTML = `
-        <h1 style="font-size:2.8rem;margin-bottom:10px">Happy Valentine’s</h1>
-        <h2 style="font-size:2.2rem">My Love ♥️</h2>
-      `;
-      document.body.appendChild(overlay);
-    }
+    
 
     function launchConfetti() {
       for (let i = 0; i < 120; i++) {
