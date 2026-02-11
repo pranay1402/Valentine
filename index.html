@@ -152,9 +152,10 @@ button {
           noBtn.textContent = 'okay fine... yes 😭';
           noBtn.style.background = '#ff4b5c';
           noBtn.onclick = () => {
-          // trigger same flow as YES
           launchConfetti();
-          
+          setTimeout(() => {
+            alert('Yay!! I knew it 😍❤️');
+          }, 200);
         };
         }, 450);
       }
