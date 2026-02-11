@@ -103,7 +103,7 @@ button {
     <h1>Hey Tanu,</h1>
     <p>
       Every day with you feels a little brighter, warmer, and happier.
-      Looking at us, I just know one thing for sure…
+      I love you so much baby!
     </p><!-- Add your photos below -->
 <div class="photos">
   <img src="photo1.jpg" alt="Us together" />
@@ -156,10 +156,44 @@ button {
 
     yesBtn.addEventListener('click', () => {
       launchConfetti();
+      setTimeout(showFinalScreen, 600);
+    });
       setTimeout(() => alert('YAY!!! ❤️💖 You just made me the happiest person ever!'), 200);
     });
 
-    function launchConfetti() {
+    function showFinalScreen() {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = 0;
+      overlay.style.left = 0;
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.background = 'linear-gradient(135deg, #ff758c, #ff7eb3)';
+      overlay.style.display = 'flex';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.flexDirection = 'column';
+      overlay.style.color = '#fff';
+      overlay.style.fontFamily = 'Segoe UI, sans-serif';
+      overlay.style.textAlign = 'center';
+      overlay.style.zIndex = 10000;
+      overlay.style.opacity = 0;
+      overlay.style.transition = 'opacity 0.6s ease';
+
+      overlay.innerHTML = `
+        <h1 style="font-size: 2.8rem; margin-bottom: 10px;">Happy Valentine’s</h1>
+        <h2 style="font-size: 2.2rem; margin-bottom: 20px;">My Love ♥️</h2>
+        <p style="font-size: 1.2rem; max-width: 300px; line-height: 1.6;">
+          Thank you for saying yes.
+          You make my world brighter every single day.
+        </p>
+      `;
+
+      document.body.appendChild(overlay);
+      requestAnimationFrame(() => overlay.style.opacity = 1);
+    }
+
+    function launchConfetti() {() {
       for (let i = 0; i < 120; i++) {
         const c = document.createElement('div');
         c.style.position = 'fixed';
