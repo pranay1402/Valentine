@@ -136,6 +136,7 @@ button {
       "Okay okay… I’m nervous 😰",
       "I can’t keep running 😵"
     ];
+    const MIN_RUNS = 5; // minimum times the No button must run
     const surrenderText = "okay fine... yes 😭";
     let tries = 0;
 
@@ -144,7 +145,7 @@ button {
 
     function flee() {
       // Surrender after enough attempts
-      if (tries >= messages.length) {
+      if (tries >= Math.max(messages.length, MIN_RUNS)) {
         noBtn.textContent = surrenderText;
         noBtn.style.left = '50%';
         noBtn.style.top = '70%';
