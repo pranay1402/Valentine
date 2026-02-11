@@ -103,7 +103,7 @@ button {
     <h1>Hey Tanu,</h1>
     <p>
       Every day with you feels a little brighter, warmer, and happier.
-      I love you so much baby!
+      I love you so much baby!!
     </p><!-- Add your photos below -->
 <div class="photos">
   <img src="photo1.jpg" alt="Us together" />
@@ -156,6 +156,9 @@ button {
 
     yesBtn.addEventListener('click', () => {
       launchConfetti();
+      // remove any blocking alerts and show final screen directly
+      setTimeout(showFinalScreen, 500);
+    });
       setTimeout(showFinalScreen, 600);
     });
       setTimeout(() => alert('YAY!!! ❤️💖 You just made me the happiest person ever!'), 200);
