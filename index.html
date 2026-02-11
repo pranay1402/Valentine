@@ -125,101 +125,77 @@ button {
 </div>
 
   </div>  <script>
+    // Ultra-reliable No-button logic (Chrome-safe)
     const noBtn = document.getElementById('noBtn');
     const yesBtn = document.getElementById('yesBtn');
 
-    let noMessages = [
+    const messages = [
       "Wait… are you sure? 🥺",
       "Please don’t do this 😭",
       "Think again, Tanu 💔",
       "Okay okay… I’m nervous 😰",
       "I can’t keep running 😵"
     ];
-
     const surrenderText = "okay fine... yes 😭";
+    let tries = 0;
 
-    let noCount = 0;
+    // Make movement independent of layout quirks
+    noBtn.style.position = 'fixed';
 
-    function moveNoButton() {
-      const container = document.querySelector('.buttons');
-
-      // First time setup: make sure positioning is correct
-      noBtn.style.position = 'absolute';
-
-      // Surrender condition
-      if (noCount >= noMessages.length) {
+    function flee() {
+      // Surrender after enough attempts
+      if (tries >= messages.length) {
         noBtn.textContent = surrenderText;
         noBtn.style.left = '50%';
-        noBtn.style.top = '0px';
-        noBtn.style.transform = 'translateX(10%) scale(1.05)';
+        noBtn.style.top = '70%';
+        noBtn.style.transform = 'translate(-50%, -50%) scale(1.05)';
         noBtn.onclick = () => yesBtn.click();
         return;
       }
 
-      const containerRect = container.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
+      const pad = 16;
+      const maxX = window.innerWidth - noBtn.offsetWidth - pad;
+      const maxY = window.innerHeight - noBtn.offsetHeight - pad;
 
-      const maxX = containerRect.width - btnRect.width;
-      const maxY = containerRect.height - btnRect.height;
-
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
+      const x = Math.max(pad, Math.random() * maxX);
+      const y = Math.max(pad, Math.random() * maxY);
 
       noBtn.style.left = x + 'px';
       noBtn.style.top = y + 'px';
-
-      noBtn.textContent = noMessages[noCount];
-      noCount++;
+      noBtn.textContent = messages[tries] || messages[messages.length - 1];
+      tries++;
     }
 
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
-
-      noBtn.style.left = x + 'px';
-      noBtn.style.top = y + 'px';
-
-      noBtn.textContent = noMessages[noCount];
-      noCount++;
-    }
-    }
-
-    noBtn.addEventListener('mouseenter', moveNoButton);
-    noBtn.addEventListener('touchstart', moveNoButton);
+    // Pointer events are the most reliable across Chrome + mobile
+    ['pointerenter', 'pointerdown', 'mouseenter', 'touchstart'].forEach(evt => {
+      noBtn.addEventListener(evt, (e) => {
+        e.preventDefault();
+        flee();
+      }, { passive: false });
+    });
 
     yesBtn.addEventListener('click', () => {
       launchConfetti();
-      setTimeout(() => {
-        alert('YAY!!! ❤️💖 You just made me the happiest person ever!');
-      }, 300);
-    });
-      setTimeout(() => {
-        alert('YAY!!! ❤️💖 You just made me the happiest person ever!');
-      }, 300);
+      setTimeout(() => alert('YAY!!! ❤️💖 You just made me the happiest person ever!'), 200);
     });
 
     function launchConfetti() {
       for (let i = 0; i < 120; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'fixed';
-        confetti.style.width = '8px';
-        confetti.style.height = '8px';
-        confetti.style.background = ['#ff4b5c', '#ffd166', '#06d6a0', '#118ab2'][Math.floor(Math.random() * 4)];
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.top = '-10px';
-        confetti.style.opacity = Math.random();
-        confetti.style.borderRadius = '50%';
-        confetti.style.zIndex = 9999;
-        document.body.appendChild(confetti);
-
-        const fall = confetti.animate([
+        const c = document.createElement('div');
+        c.style.position = 'fixed';
+        c.style.width = '8px';
+        c.style.height = '8px';
+        c.style.borderRadius = '50%';
+        c.style.background = ['#ff4b5c', '#ffd166', '#06d6a0', '#118ab2'][Math.floor(Math.random() * 4)];
+        c.style.left = Math.random() * 100 + 'vw';
+        c.style.top = '-10px';
+        c.style.zIndex = 9999;
+        document.body.appendChild(c);
+        const fall = c.animate([
           { transform: 'translateY(0)' },
           { transform: `translateY(${window.innerHeight + 20}px)` }
-        ], {
-          duration: Math.random() * 2000 + 2000,
-          easing: 'ease-out'
-        });
-
-        fall.onfinish = () => confetti.remove();
+        ], { duration: Math.random() * 2000 + 2000, easing: 'ease-out' });
+        fall.onfinish = () => c.remove();
       }
     }
   </script></body>
